@@ -1,4 +1,4 @@
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 1   
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 1   
 
 
 C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
@@ -14,10 +14,10 @@ line level    source
    4          typedef unsigned char BYTE;
    5          typedef unsigned int WORD;
    6          
-   7          #define CMD_IDLE    0               //盯家Α
-   8          #define CMD_READ    1               //IAPじ舱弄
-   9          #define CMD_PROGRAM 2               //IAPじ舱祘Αて
-  10          #define CMD_ERASE   3               //IAP跋揽埃
+   7          #define CMD_IDLE    0               // 侍機
+   8          #define CMD_READ    1               //IAP讀取資料
+   9          #define CMD_PROGRAM 2               //IAP寫入資料
+  10          #define CMD_ERASE   3               //IAP清除資料
   11          
   12          //#define ENABLE_IAP 0x80           //if SYSCLK<30MHz
   13          //#define ENABLE_IAP 0x81           //if SYSCLK<24MHz
@@ -52,638 +52,635 @@ line level    source
   42   1        SBUF=ID; 
   43   1          ch=2;
   44   1        
-  45   1          Delay(10);                   //┑
-  46   1          //IapEraseSector(0x4000);    //跋揽埃
-  47   1        //IapReadByte(0x4000); 
-  48   1          //IapProgramByte(0x4000, 0xa5); 
-  49   1        id_data=IapReadByte(0x4000); 
-  50   1        ID=id_data;
-  51   1        
-  52   1          while (1)
-  53   1          {
-  54   2              if(temp1>200){
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 2   
+  45   1          Delay(10);   //蛓入ID
+  46   1        id_data=IapReadByte(0x4000); 
+  47   1        ID=id_data;
+  48   1        
+  49   1          while (1)
+  50   1          {
+  51   2              if(temp1>200){
+  52   3                  temp1=0;
+  53   3                  temp2++;
+  54   3            temp3++;
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 2   
 
-  55   3                  temp1=0;
-  56   3                  temp2++;
-  57   3            temp3++;
-  58   3                  if(temp2>100){
-  59   4                    temp2=0;
-  60   4                  }
-  61   3              }
-  62   2          if(temp3<10){
-  63   3            P32=0;
-  64   3            add1=0;
+  55   3                  if(temp2>100){
+  56   4                    temp2=0;
+  57   4                  }
+  58   3              }
+  59   2          if(temp3<10){
+  60   3            P32=0;
+  61   3            add1=0;
+  62   3          }
+  63   2          else if(temp3<800){
+  64   3            P32=1;
   65   3          }
-  66   2          else if(temp3<800){
-  67   3            P32=1;
-  68   3          }
-  69   2          else if(temp3<810){
-  70   3            if(temp3==800){
-  71   4              Cal_DHT11();
-  72   4              temp3++;
-  73   4            }     
+  66   2          else if(temp3<810){
+  67   3            if(temp3==800){
+  68   4              Cal_DHT11();
+  69   4              temp3++;
+  70   4            }     
+  71   3          }
+  72   2          else{     
+  73   3            temp3=0;    
   74   3          }
-  75   2          else{     
-  76   3            temp3=0;    
-  77   3          }
-  78   2              if(rx1_to>=400){
-  79   3                rx1_to=0;
-  80   3                if(rx1_cnt>0){
-  81   4                  modbus_s();
-  82   4                  rx1_cnt=0;
-  83   4                }
-  84   3                GET_ADC();
-  85   3            if(count2>=500){
-  86   4            count2=0;  
-  87   4              Cal_adc();
-  88   4            }
-  89   3              }
-  90   2          if(rx2_to>=400){
-  91   3                rx2_to=0;
-  92   3                if(rx2_cnt>0){
-  93   4            app_command();
-  94   4                  rx2_cnt=0;      
-  95   4                }
-  96   3          }  
-  97   2              output();
-  98   2      
-  99   2          }
- 100   1      }
- 101          //-----------------------------------------------------------//
- 102          
- 103          void app_command(void){
- 104   1      unsigned char buf;  
- 105   1         if(rx2_cnt>0){
- 106   2             if(RX2_Buffer[0]==0){
- 107   3             RX2_Buffer[0]=0x01;  
- 108   3               if(RX2_Buffer[1]==0){
- 109   4                 if(RX2_Buffer[2]==0){
- 110   5      
- 111   5                 if(RX2_Buffer[3]==0x30){
- 112   6                id_data = RX2_Buffer[6]&0x0f;
- 113   6                id_data += (RX2_Buffer[5]&0x0f)*10;
- 114   6                id_data += (RX2_Buffer[4]&0x0f)*100;  
- 115   6                    IapEraseSector(0x4000);    //跋揽埃
- 116   6                          IapProgramByte(0x4000, id_data);  
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 3   
+  75   2              if(rx1_to>=400){
+  76   3                rx1_to=0;
+  77   3                if(rx1_cnt>0){
+  78   4                  modbus_s();
+  79   4                  rx1_cnt=0;
+  80   4                }
+  81   3                GET_ADC();
+  82   3            if(count2>=500){
+  83   4            count2=0;  
+  84   4              Cal_adc();
+  85   4            }
+  86   3              }
+  87   2          if(rx2_to>=400){
+  88   3                rx2_to=0;
+  89   3                if(rx2_cnt>0){
+  90   4            app_command();
+  91   4                  rx2_cnt=0;      
+  92   4                }
+  93   3          }  
+  94   2              output();
+  95   2      
+  96   2          }
+  97   1      }
+  98          //-----------------------------------------------------------//
+  99          
+ 100          void app_command(void){
+ 101   1      unsigned char buf;  
+ 102   1         if(rx2_cnt>0){
+ 103   2             if(RX2_Buffer[0]==0){
+ 104   3             RX2_Buffer[0]=0x01;  
+ 105   3               if(RX2_Buffer[1]==0){
+ 106   4                 if(RX2_Buffer[2]==0){
+ 107   5      
+ 108   5                 if(RX2_Buffer[3]==0x30){
+ 109   6                id_data = RX2_Buffer[6]&0x0f;
+ 110   6                id_data += (RX2_Buffer[5]&0x0f)*10;
+ 111   6                id_data += (RX2_Buffer[4]&0x0f)*100;  
+ 112   6                    IapEraseSector(0x4000);    //清除資料
+ 113   6                          IapProgramByte(0x4000, id_data);  
+ 114   6                id_data=IapReadByte(0x4000); 
+ 115   6                ID=id_data;
+ 116   6               }
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 3   
 
- 117   6                id_data=IapReadByte(0x4000); 
- 118   6                ID=id_data;
- 119   6               }
- 120   5                 else if(RX2_Buffer[3]==0x31){
- 121   6                if(P34==0){          //膥筿竟1
- 122   7                  Modbuf_Buffer[1]&=0xfe;
+ 117   5                 else if(RX2_Buffer[3]==0x31){
+ 118   6                if(P34==0){          //繼電器1
+ 119   7                  Modbuf_Buffer[1]&=0xfe;
+ 120   7                }
+ 121   6                else{
+ 122   7                  Modbuf_Buffer[1]|=0x01;
  123   7                }
- 124   6                else{
- 125   7                  Modbuf_Buffer[1]|=0x01;
- 126   7                }
- 127   6               }  
- 128   5               else if(RX2_Buffer[3]==0x32){
- 129   6                if(P35==0){          //膥筿竟2 
- 130   7                  Modbuf_Buffer[1]&=0xfd;
- 131   7                }
- 132   6                else{
- 133   7                  Modbuf_Buffer[1]|=0x02;
- 134   7                }          
- 135   6               }         
- 136   5                 }         
- 137   4               }         
- 138   3             }     
- 139   2           
- 140   2                 P27=1;
- 141   2                 tx2_end=17;
- 142   2                 tx2_cnt=1;
- 143   2               buf=TX2_Buffer[0]=0x00; //繷絏*3 
- 144   2             TX2_Buffer[1]=0x00;
- 145   2             TX2_Buffer[2]=0x00;
- 146   2             TX2_Buffer[3]=0x10;  //
- 147   2             //TX2_Buffer[4]=ID;    //腹 
- 148   2             TX2_Buffer[4]=id_data;    //腹        
- 149   2             TX2_Buffer[5]=~P34;  //膥筿竟1
- 150   2             TX2_Buffer[5]+=0x30;
- 151   2             TX2_Buffer[6]=~P35;  //膥筿竟2
- 152   2             TX2_Buffer[6]+=0x30;      
- 153   2             TX2_Buffer[7]=Modbuf_Buffer[10];   //CH1筿瑈
- 154   2             TX2_Buffer[8]=Modbuf_Buffer[11];   
- 155   2             TX2_Buffer[9]=Modbuf_Buffer[14];   //CH2筿瑈
- 156   2             TX2_Buffer[10]=Modbuf_Buffer[15];
- 157   2             TX2_Buffer[11]=Modbuf_Buffer[18];  //CH1筿溃
- 158   2             TX2_Buffer[12]=Modbuf_Buffer[19];
- 159   2             TX2_Buffer[13]=Modbuf_Buffer[20];  //CH2筿溃
- 160   2             TX2_Buffer[14]=Modbuf_Buffer[21];  
- 161   2             TX2_Buffer[15]=0x0d; //Ю絏
- 162   2             TX2_Buffer[16]=0x0a; 
- 163   2                 S2BUF=buf;
- 164   2         }
- 165   1      }
- 166          //-----------------------------------------------------------//
- 167          void UART_config(void){
- 168   1         SCON = 0x50;   //8bit and variable baudrate
- 169   1         AUXR |= 0x40;    //Timer1's clock is Fosc (1T)
- 170   1         AUXR &= 0xFE;    //Use Timer1 as baudrate generator
- 171   1         TMOD &= 0x0F;    //Set Timer1 as 16-bit auto reload mode
- 172   1         TL1 = 0xC7;    //Initial timer value
- 173   1         TH1 = 0xFE;    //Initial timer value
- 174   1         ET1 = 0;   //Disable Timer1 interrupt
- 175   1         TR1 = 1;   //Timer1 running
- 176   1           ES = 1;
- 177   1      
- 178   1           S2CON = 0x50;           //8bit and variable baudrate
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 4   
+ 124   6               }  
+ 125   5               else if(RX2_Buffer[3]==0x32){
+ 126   6                if(P35==0){          //繼電器2 
+ 127   7                  Modbuf_Buffer[1]&=0xfd;
+ 128   7                }
+ 129   6                else{
+ 130   7                  Modbuf_Buffer[1]|=0x02;
+ 131   7                }          
+ 132   6               }         
+ 133   5                 }         
+ 134   4               }         
+ 135   3             }     
+ 136   2           
+ 137   2                 P27=1;
+ 138   2                 tx2_end=17;
+ 139   2                 tx2_cnt=1;
+ 140   2               buf=TX2_Buffer[0]=0x00; //頭碼*3 
+ 141   2             TX2_Buffer[1]=0x00;
+ 142   2             TX2_Buffer[2]=0x00;
+ 143   2             TX2_Buffer[3]=0x10;  //長度
+ 144   2             //TX2_Buffer[4]=ID;    //站號
+ 145   2             TX2_Buffer[4]=id_data;    //站號      
+ 146   2             TX2_Buffer[5]=~P34;  //繼電器1
+ 147   2             TX2_Buffer[5]+=0x30;
+ 148   2             TX2_Buffer[6]=~P35;  //繼電器2
+ 149   2             TX2_Buffer[6]+=0x30;      
+ 150   2             TX2_Buffer[7]=Modbuf_Buffer[10];   //CH1電流
+ 151   2             TX2_Buffer[8]=Modbuf_Buffer[11];   
+ 152   2             TX2_Buffer[9]=Modbuf_Buffer[14];   //CH2電流
+ 153   2             TX2_Buffer[10]=Modbuf_Buffer[15];
+ 154   2             TX2_Buffer[11]=Modbuf_Buffer[18];  //CH1電壓
+ 155   2             TX2_Buffer[12]=Modbuf_Buffer[19];
+ 156   2             TX2_Buffer[13]=Modbuf_Buffer[20];  //CH2電壓
+ 157   2             TX2_Buffer[14]=Modbuf_Buffer[21];  
+ 158   2             TX2_Buffer[15]=0x0d; //尾碼
+ 159   2             TX2_Buffer[16]=0x0a; 
+ 160   2                 S2BUF=buf;
+ 161   2         }
+ 162   1      }
+ 163          //-----------------------------------------------------------//
+ 164          void UART_config(void){
+ 165   1         SCON = 0x50;   //8bit and variable baudrate
+ 166   1         AUXR |= 0x40;    //Timer1's clock is Fosc (1T)
+ 167   1         AUXR &= 0xFE;    //Use Timer1 as baudrate generator
+ 168   1         TMOD &= 0x0F;    //Set Timer1 as 16-bit auto reload mode
+ 169   1         TL1 = 0xC7;    //Initial timer value
+ 170   1         TH1 = 0xFE;    //Initial timer value
+ 171   1         ET1 = 0;   //Disable Timer1 interrupt
+ 172   1         TR1 = 1;   //Timer1 running
+ 173   1           ES = 1;
+ 174   1      
+ 175   1           S2CON = 0x50;           //8bit and variable baudrate
+ 176   1           AUXR |= 0x04;           //Timer2's clock is Fosc (1T)
+ 177   1           TL2 = 0xC7;             //Initial timer value
+ 178   1           TH2 = 0xFE;             //Initial timer value
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 4   
 
- 179   1           AUXR |= 0x04;           //Timer2's clock is Fosc (1T)
- 180   1           TL2 = 0xC7;             //Initial timer value
- 181   1           TH2 = 0xFE;             //Initial timer value
- 182   1           AUXR |= 0x10;           //Timer2 running
- 183   1           UART2_INT_ENABLE();
- 184   1      
- 185   1           P27 = 0;
- 186   1           P55 = 0;
- 187   1      }
- 188          //-----------------------------------------------------------//
- 189          void GPIO_config(void){
- 190   1           P1M1 = 0x3c;
- 191   1           P1M0 = 0x3c;
- 192   1           P0M1 = 0x00;
- 193   1           P0M0 = 0x00;
- 194   1           P2M1 = 0x00;
- 195   1           P2M0 = 0x00;
- 196   1           P3M1 = 0x00;
- 197   1           P3M0 = 0x00;
- 198   1         P5M1 = 0x00;
- 199   1           P5M0 = 0x00;
- 200   1         Modbuf_Buffer[1]=3;
- 201   1      }
- 202          //-----------------------------------------------------------//
- 203          void Timer_config(void){        //10us@12.000MHz
- 204   1              TL0 = 0x88;   //Initial timer value
- 205   1              TH0 = 0xFF;   //Initial timer value
- 206   1              TF0 = 0;                //Clear TF0 flag
- 207   1              TR0 = 1;                //Timer0 start run
- 208   1              Timer0_1T();
- 209   1              Timer0_16bitAutoReload();
- 210   1              Timer0_InterruptEnable();
- 211   1              Timer0_Run();
- 212   1      }
- 213          //-----------------------------------------------------------//
- 214          void ADC_config(void){
- 215   1           P1ASF = 0x3c;                   //砞﹚P1AD
- 216   1           ADC_RES = 0;                    //睲埃挡狦盚竟
- 217   1           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
- 218   1      }
- 219          //-----------------------------------------------------------//
- 220          void timer0_int (void) interrupt TIMER0_VECTOR
- 221          {
- 222   1              temp1++;
- 223   1              if(P21==1){
- 224   2                read=1;
- 225   2                if(count1<10){
- 226   3                  count1++;
- 227   3                }
- 228   2              }
- 229   1              else{
- 230   2                if(read==1){
- 231   3                  read=0;
- 232   3                  DHT11_buf[add1]=count1;
- 233   3                  add1++;
- 234   3                  count1=0;
- 235   3                }
- 236   2              }
- 237   1              rx1_to++;
- 238   1          rx2_to++;
- 239   1      }
- 240          
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 5   
+ 179   1           AUXR |= 0x10;           //Timer2 running
+ 180   1           UART2_INT_ENABLE();
+ 181   1      
+ 182   1           P27 = 0;
+ 183   1           P55 = 0;
+ 184   1      }
+ 185          //-----------------------------------------------------------//
+ 186          void GPIO_config(void){
+ 187   1           P1M1 = 0x3c;
+ 188   1           P1M0 = 0x3c;
+ 189   1           P0M1 = 0x00;
+ 190   1           P0M0 = 0x00;
+ 191   1           P2M1 = 0x00;
+ 192   1           P2M0 = 0x00;
+ 193   1           P3M1 = 0x00;
+ 194   1           P3M0 = 0x00;
+ 195   1         P5M1 = 0x00;
+ 196   1           P5M0 = 0x00;
+ 197   1         Modbuf_Buffer[1]=3;
+ 198   1      }
+ 199          //-----------------------------------------------------------//
+ 200          void Timer_config(void){        //10us@12.000MHz
+ 201   1              TL0 = 0x88;   //Initial timer value
+ 202   1              TH0 = 0xFF;   //Initial timer value
+ 203   1              TF0 = 0;                //Clear TF0 flag
+ 204   1              TR0 = 1;                //Timer0 start run
+ 205   1              Timer0_1T();
+ 206   1              Timer0_16bitAutoReload();
+ 207   1              Timer0_InterruptEnable();
+ 208   1              Timer0_Run();
+ 209   1      }
+ 210          //-----------------------------------------------------------//
+ 211          void ADC_config(void){
+ 212   1           P1ASF = 0x3c;                   //砞﹚P1AD
+ 213   1           ADC_RES = 0;                    //睲埃挡狦盚竟
+ 214   1           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+ 215   1      }
+ 216          //-----------------------------------------------------------//
+ 217          void timer0_int (void) interrupt TIMER0_VECTOR
+ 218          {
+ 219   1              temp1++;
+ 220   1              if(P21==1){
+ 221   2                read=1;
+ 222   2                if(count1<10){
+ 223   3                  count1++;
+ 224   3                }
+ 225   2              }
+ 226   1              else{
+ 227   2                if(read==1){
+ 228   3                  read=0;
+ 229   3                  DHT11_buf[add1]=count1;
+ 230   3                  add1++;
+ 231   3                  count1=0;
+ 232   3                }
+ 233   2              }
+ 234   1              rx1_to++;
+ 235   1          rx2_to++;
+ 236   1      }
+ 237          
+ 238          /********************* UART1い耞ㄧΑ************************/
+ 239          void UART1_int (void) interrupt UART1_VECTOR
+ 240          {
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 5   
 
- 241          /********************* UART1い耞ㄧΑ************************/
- 242          void UART1_int (void) interrupt UART1_VECTOR
- 243          {
- 244   1      //    unsigned char buf;
- 245   1          if(RI)
- 246   1          {
- 247   2              RI = 0;
- 248   2              rx1_to=0;
- 249   2              if(rx1_cnt<128){
- 250   3                RX1_Buffer[rx1_cnt]=SBUF;
- 251   3                rx1_cnt++;
- 252   3              }
- 253   2          }
- 254   1          if(TI)
- 255   1          {
- 256   2              TI = 0;
- 257   2              if(tx1_cnt<tx1_end){
- 258   3                SBUF=RX1_Buffer[tx1_cnt];
- 259   3                tx1_cnt++;
+ 241   1      //    unsigned char buf;
+ 242   1          if(RI)
+ 243   1          {
+ 244   2              RI = 0;
+ 245   2              rx1_to=0;
+ 246   2              if(rx1_cnt<128){
+ 247   3                RX1_Buffer[rx1_cnt]=SBUF;
+ 248   3                rx1_cnt++;
+ 249   3              }
+ 250   2          }
+ 251   1          if(TI)
+ 252   1          {
+ 253   2              TI = 0;
+ 254   2              if(tx1_cnt<tx1_end){
+ 255   3                SBUF=RX1_Buffer[tx1_cnt];
+ 256   3                tx1_cnt++;
+ 257   3              }
+ 258   2              else{
+ 259   3                P55=0;
  260   3              }
- 261   2              else{
- 262   3                P55=0;
- 263   3              }
- 264   2          }
- 265   1      } 
- 266          /********************* UART2い耞ㄧΑ************************/
- 267          void UART2_int (void) interrupt UART2_VECTOR
- 268          {
- 269   1          //unsigned char buf;
- 270   1      
- 271   1          if(RI2)
- 272   1          {
- 273   2              CLR_RI2();
- 274   2              //buf=S2BUF;
- 275   2              //P27=1;
- 276   2              //S2BUF=buf;
- 277   2              rx2_to=0;
- 278   2              if(rx2_cnt<128){
- 279   3                RX2_Buffer[rx2_cnt]=S2BUF;
- 280   3                rx2_cnt++;
- 281   3              }   
- 282   2          }
- 283   1          if(TI2)
- 284   1          {
- 285   2              CLR_TI2();
- 286   2              //P27=0;
- 287   2              if(tx2_cnt<tx2_end){
- 288   3                S2BUF=TX2_Buffer[tx2_cnt];
- 289   3                tx2_cnt++;
- 290   3              }
- 291   2              else{
- 292   3                P27=0;
- 293   3              }   
- 294   2          }
- 295   1      
- 296   1      } 
- 297          /**********************************************/
- 298          void GET_ID(void)
- 299          {
- 300   1           if(P36==0){
- 301   2              Modbuf_Buffer[0]|=0x01; 
+ 261   2          }
+ 262   1      } 
+ 263          /********************* UART2い耞ㄧΑ************************/
+ 264          void UART2_int (void) interrupt UART2_VECTOR
+ 265          {
+ 266   1          //unsigned char buf;
+ 267   1      
+ 268   1          if(RI2)
+ 269   1          {
+ 270   2              CLR_RI2();
+ 271   2              //buf=S2BUF;
+ 272   2              //P27=1;
+ 273   2              //S2BUF=buf;
+ 274   2              rx2_to=0;
+ 275   2              if(rx2_cnt<128){
+ 276   3                RX2_Buffer[rx2_cnt]=S2BUF;
+ 277   3                rx2_cnt++;
+ 278   3              }   
+ 279   2          }
+ 280   1          if(TI2)
+ 281   1          {
+ 282   2              CLR_TI2();
+ 283   2              //P27=0;
+ 284   2              if(tx2_cnt<tx2_end){
+ 285   3                S2BUF=TX2_Buffer[tx2_cnt];
+ 286   3                tx2_cnt++;
+ 287   3              }
+ 288   2              else{
+ 289   3                P27=0;
+ 290   3              }   
+ 291   2          }
+ 292   1      
+ 293   1      } 
+ 294          /**********************************************/
+ 295          void GET_ID(void)
+ 296          {
+ 297   1           if(P36==0){
+ 298   2              Modbuf_Buffer[0]|=0x01; 
+ 299   2           }
+ 300   1           else{
+ 301   2              Modbuf_Buffer[0]&=0xfe; 
  302   2           }
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 6   
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 6   
 
- 303   1           else{
- 304   2              Modbuf_Buffer[0]&=0xfe; 
+ 303   1           if(P37==0){
+ 304   2              Modbuf_Buffer[0]|=0x02; 
  305   2           }
- 306   1           if(P37==0){
- 307   2              Modbuf_Buffer[0]|=0x02; 
+ 306   1           else{
+ 307   2              Modbuf_Buffer[0]&=0xfd; 
  308   2           }
- 309   1           else{
- 310   2              Modbuf_Buffer[0]&=0xfd; 
+ 309   1           if(P20==0){
+ 310   2              Modbuf_Buffer[0]|=0x04; 
  311   2           }
- 312   1           if(P20==0){
- 313   2              Modbuf_Buffer[0]|=0x04; 
+ 312   1           else{
+ 313   2              Modbuf_Buffer[0]&=0xfb; 
  314   2           }
- 315   1           else{
- 316   2              Modbuf_Buffer[0]&=0xfb; 
+ 315   1           if(P21==0){
+ 316   2              Modbuf_Buffer[0]|=0x08; 
  317   2           }
- 318   1           if(P21==0){
- 319   2              Modbuf_Buffer[0]|=0x08; 
- 320   2           }
- 321   1           else{
- 322   2              Modbuf_Buffer[0]&=0xf7; 
- 323   2           }  
- 324   1           if(P22==0){
- 325   2              Modbuf_Buffer[0]|=0x10; 
+ 318   1           else{
+ 319   2              Modbuf_Buffer[0]&=0xf7; 
+ 320   2           }  
+ 321   1           if(P22==0){
+ 322   2              Modbuf_Buffer[0]|=0x10; 
+ 323   2           }
+ 324   1           else{
+ 325   2              Modbuf_Buffer[0]&=0xef; 
  326   2           }
- 327   1           else{
- 328   2              Modbuf_Buffer[0]&=0xef; 
+ 327   1           if(P23==0){
+ 328   2              Modbuf_Buffer[0]|=0x20; 
  329   2           }
- 330   1           if(P23==0){
- 331   2              Modbuf_Buffer[0]|=0x20; 
+ 330   1           else{
+ 331   2              Modbuf_Buffer[0]&=0xdf; 
  332   2           }
- 333   1           else{
- 334   2              Modbuf_Buffer[0]&=0xdf; 
+ 333   1           if(P24==0){
+ 334   2              Modbuf_Buffer[0]|=0x40; 
  335   2           }
- 336   1           if(P24==0){
- 337   2              Modbuf_Buffer[0]|=0x40; 
- 338   2           }
- 339   1           else{
- 340   2              Modbuf_Buffer[0]&=0xbf; 
- 341   2           }  
- 342   1           if(P25==0){
- 343   2              Modbuf_Buffer[0]|=0x80; 
- 344   2           }
- 345   1           else{
- 346   2              Modbuf_Buffer[0]&=0x7f; 
- 347   2           }  
- 348   1           ID=Modbuf_Buffer[0];    
- 349   1      }
- 350          /**********************************************/
- 351          unsigned int usMBCRC16(unsigned int usLen )
- 352          {
- 353   1          unsigned char           ucCRCHi = 0xFF;
- 354   1          unsigned char          ucCRCLo = 0xFF;
- 355   1          unsigned int          iIndex;
- 356   1          unsigned char j;   j=0;
- 357   1          
- 358   1          while( usLen-- ){
- 359   2              iIndex = ucCRCLo ^ RX1_Buffer[j];
- 360   2              j++;
- 361   2              ucCRCLo = ( unsigned char )( ucCRCHi ^ aucCRCHi[iIndex] );
- 362   2              ucCRCHi = aucCRCLo[iIndex];
- 363   2          }
- 364   1          return ( unsigned int )( ucCRCHi << 8 | ucCRCLo );
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 7   
+ 336   1           else{
+ 337   2              Modbuf_Buffer[0]&=0xbf; 
+ 338   2           }  
+ 339   1           if(P25==0){
+ 340   2              Modbuf_Buffer[0]|=0x80; 
+ 341   2           }
+ 342   1           else{
+ 343   2              Modbuf_Buffer[0]&=0x7f; 
+ 344   2           }  
+ 345   1           ID=Modbuf_Buffer[0];    
+ 346   1      }
+ 347          /**********************************************/
+ 348          unsigned int usMBCRC16(unsigned int usLen )
+ 349          {
+ 350   1          unsigned char           ucCRCHi = 0xFF;
+ 351   1          unsigned char          ucCRCLo = 0xFF;
+ 352   1          unsigned int          iIndex;
+ 353   1          unsigned char j;   j=0;
+ 354   1          
+ 355   1          while( usLen-- ){
+ 356   2              iIndex = ucCRCLo ^ RX1_Buffer[j];
+ 357   2              j++;
+ 358   2              ucCRCLo = ( unsigned char )( ucCRCHi ^ aucCRCHi[iIndex] );
+ 359   2              ucCRCHi = aucCRCLo[iIndex];
+ 360   2          }
+ 361   1          return ( unsigned int )( ucCRCHi << 8 | ucCRCLo );
+ 362   1      }
+ 363          /**********************************************/ 
+ 364          void modbus_s(void){
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 7   
 
- 365   1      }
- 366          /**********************************************/ 
- 367          void modbus_s(void){
- 368   1       unsigned int crc,crc_buf,addr,len,i;   
- 369   1           if(RX1_Buffer[0]==ID){
- 370   2             crc_buf=usMBCRC16((rx1_cnt-2));
- 371   2             crc=(RX1_Buffer[rx1_cnt-1]*256)+RX1_Buffer[rx1_cnt-2];
- 372   2             if(crc==crc_buf){
- 373   3               addr=RX1_Buffer[2];
- 374   3               addr<<=8;
- 375   3               addr+=RX1_Buffer[3]; 
- 376   3               addr<<=1;
- 377   3               if(RX1_Buffer[1]==3){
- 378   4                 len=RX1_Buffer[rx1_cnt-3]*2;
- 379   4                 RX1_Buffer[1]=3;
- 380   4                 RX1_Buffer[2]=len;
- 381   4                 for(i=3;i<len+3;i++){
- 382   5                   RX1_Buffer[i]=Modbuf_Buffer[addr];
- 383   5                   addr++;
- 384   5                 }
- 385   4                 P55=1;
- 386   4                 crc_buf=usMBCRC16(len+3);
- 387   4                 RX1_Buffer[len+4]=crc_buf/256;
- 388   4                 RX1_Buffer[len+3]=crc_buf%256;
- 389   4                 tx1_end=len+5;
- 390   4                 tx1_cnt=1;
- 391   4                 SBUF=ID;
- 392   4               }
- 393   3               else if(RX1_Buffer[1]==6){
- 394   4                 Modbuf_Buffer[addr]=RX1_Buffer[4];
- 395   4                 addr++;
- 396   4                 Modbuf_Buffer[addr]=RX1_Buffer[5];
- 397   4                 P55=1;
- 398   4                 tx1_end=rx1_cnt;
- 399   4                 tx1_cnt=1;
- 400   4                 SBUF=ID; 
- 401   4               }
- 402   3               else if(RX1_Buffer[1]==16){
- 403   4                 len=RX1_Buffer[6]+7;
- 404   4                 for(i=7; i<len; i++){
- 405   5                    Modbuf_Buffer[addr]=RX1_Buffer[i];
- 406   5                    addr++;
- 407   5                 }
- 408   4                 crc_buf=usMBCRC16(6);
- 409   4                 RX1_Buffer[7]=crc_buf/256;
- 410   4                 RX1_Buffer[6]=crc_buf%256;
- 411   4                 P55=1;
- 412   4                 tx1_end=8;
- 413   4                 tx1_cnt=1;
- 414   4                 SBUF=ID; 
- 415   4               }
- 416   3             }
- 417   2           }
- 418   1      
- 419   1      }
- 420          /**********************************************/
- 421          void output(void){
- 422   1       
- 423   1           if(Modbuf_Buffer[1]&1){
- 424   2             P34=0;
+ 365   1       unsigned int crc,crc_buf,addr,len,i;   
+ 366   1           if(RX1_Buffer[0]==ID){
+ 367   2             crc_buf=usMBCRC16((rx1_cnt-2));
+ 368   2             crc=(RX1_Buffer[rx1_cnt-1]*256)+RX1_Buffer[rx1_cnt-2];
+ 369   2             if(crc==crc_buf){
+ 370   3               addr=RX1_Buffer[2];
+ 371   3               addr<<=8;
+ 372   3               addr+=RX1_Buffer[3]; 
+ 373   3               addr<<=1;
+ 374   3               if(RX1_Buffer[1]==3){
+ 375   4                 len=RX1_Buffer[rx1_cnt-3]*2;
+ 376   4                 RX1_Buffer[1]=3;
+ 377   4                 RX1_Buffer[2]=len;
+ 378   4                 for(i=3;i<len+3;i++){
+ 379   5                   RX1_Buffer[i]=Modbuf_Buffer[addr];
+ 380   5                   addr++;
+ 381   5                 }
+ 382   4                 P55=1;
+ 383   4                 crc_buf=usMBCRC16(len+3);
+ 384   4                 RX1_Buffer[len+4]=crc_buf/256;
+ 385   4                 RX1_Buffer[len+3]=crc_buf%256;
+ 386   4                 tx1_end=len+5;
+ 387   4                 tx1_cnt=1;
+ 388   4                 SBUF=ID;
+ 389   4               }
+ 390   3               else if(RX1_Buffer[1]==6){
+ 391   4                 Modbuf_Buffer[addr]=RX1_Buffer[4];
+ 392   4                 addr++;
+ 393   4                 Modbuf_Buffer[addr]=RX1_Buffer[5];
+ 394   4                 P55=1;
+ 395   4                 tx1_end=rx1_cnt;
+ 396   4                 tx1_cnt=1;
+ 397   4                 SBUF=ID; 
+ 398   4               }
+ 399   3               else if(RX1_Buffer[1]==16){
+ 400   4                 len=RX1_Buffer[6]+7;
+ 401   4                 for(i=7; i<len; i++){
+ 402   5                    Modbuf_Buffer[addr]=RX1_Buffer[i];
+ 403   5                    addr++;
+ 404   5                 }
+ 405   4                 crc_buf=usMBCRC16(6);
+ 406   4                 RX1_Buffer[7]=crc_buf/256;
+ 407   4                 RX1_Buffer[6]=crc_buf%256;
+ 408   4                 P55=1;
+ 409   4                 tx1_end=8;
+ 410   4                 tx1_cnt=1;
+ 411   4                 SBUF=ID; 
+ 412   4               }
+ 413   3             }
+ 414   2           }
+ 415   1      
+ 416   1      }
+ 417          /**********************************************/
+ 418          void output(void){
+ 419   1       
+ 420   1           if(Modbuf_Buffer[1]&1){
+ 421   2             P34=0;
+ 422   2           }
+ 423   1           else{
+ 424   2             P34=1;
  425   2           }
- 426   1           else{
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 8   
+ 426   1           if(Modbuf_Buffer[1]&2){
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 8   
 
- 427   2             P34=1;
+ 427   2             P35=0;
  428   2           }
- 429   1           if(Modbuf_Buffer[1]&2){
- 430   2             P35=0;
- 431   2           }
- 432   1           else{
- 433   2             P35=1;
- 434   2           }   
- 435   1      }
- 436          /**********************************************/
- 437          void GET_ADC(void){
- 438   1           if(ch==4){
- 439   2             adc1=ADC_RES;
- 440   2           adc1<<=2;
- 441   2           adc1+=ADC_RESL;
- 442   2             Modbuf_Buffer[2]=adc1/256;
- 443   2             Modbuf_Buffer[3]=adc1%256;
- 444   2             ch=5;
- 445   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
- 446   2           if(adc1>A_max1){
- 447   3               A_max1=adc1;
+ 429   1           else{
+ 430   2             P35=1;
+ 431   2           }   
+ 432   1      }
+ 433          /**********************************************/
+ 434          void GET_ADC(void){
+ 435   1           if(ch==4){
+ 436   2             adc1=ADC_RES;
+ 437   2           adc1<<=2;
+ 438   2           adc1+=ADC_RESL;
+ 439   2             Modbuf_Buffer[2]=adc1/256;
+ 440   2             Modbuf_Buffer[3]=adc1%256;
+ 441   2             ch=5;
+ 442   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+ 443   2           if(adc1>A_max1){
+ 444   3               A_max1=adc1;
+ 445   3             }
+ 446   2             else if(adc1<A_min1){
+ 447   3               A_min1=adc1;
  448   3             }
- 449   2             else if(adc1<A_min1){
- 450   3               A_min1=adc1;
- 451   3             }
- 452   2           }
- 453   1           else if(ch==5){
- 454   2             adc2=ADC_RES;
- 455   2           adc2<<=2;
- 456   2           adc2+=ADC_RESL;
- 457   2             Modbuf_Buffer[4]=adc2/256;
- 458   2             Modbuf_Buffer[5]=adc2%256;
- 459   2             ch=2;
- 460   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
- 461   2           if(adc2>A_max2){
- 462   3               A_max2=adc2;
+ 449   2           }
+ 450   1           else if(ch==5){
+ 451   2             adc2=ADC_RES;
+ 452   2           adc2<<=2;
+ 453   2           adc2+=ADC_RESL;
+ 454   2             Modbuf_Buffer[4]=adc2/256;
+ 455   2             Modbuf_Buffer[5]=adc2%256;
+ 456   2             ch=2;
+ 457   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+ 458   2           if(adc2>A_max2){
+ 459   3               A_max2=adc2;
+ 460   3             }
+ 461   2             else if(adc2<A_min2){
+ 462   3               A_min2=adc2;
  463   3             }
- 464   2             else if(adc2<A_min2){
- 465   3               A_min2=adc2;
- 466   3             }
- 467   2           }   
- 468   1           else if(ch==2){
- 469   2             adc3=ADC_RES;
- 470   2           adc3<<=2;
- 471   2           adc3+=ADC_RESL;
- 472   2             Modbuf_Buffer[6]=adc3/256;
- 473   2             Modbuf_Buffer[7]=adc3%256;
- 474   2             ch=3;
- 475   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
- 476   2           if(adc3>V_max1){
- 477   3               V_max1=adc3;    
- 478   3             }
- 479   2           count2++;
- 480   2           }   
- 481   1           else if(ch==3){
- 482   2             adc4=ADC_RES;
- 483   2           adc4<<=2;
- 484   2           adc4+=ADC_RESL;
- 485   2             Modbuf_Buffer[8]=adc4/256;
- 486   2             Modbuf_Buffer[9]=adc4%256;
- 487   2             ch=4;
- 488   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 9   
+ 464   2           }   
+ 465   1           else if(ch==2){
+ 466   2             adc3=ADC_RES;
+ 467   2           adc3<<=2;
+ 468   2           adc3+=ADC_RESL;
+ 469   2             Modbuf_Buffer[6]=adc3/256;
+ 470   2             Modbuf_Buffer[7]=adc3%256;
+ 471   2             ch=3;
+ 472   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+ 473   2           if(adc3>V_max1){
+ 474   3               V_max1=adc3;    
+ 475   3             }
+ 476   2           count2++;
+ 477   2           }   
+ 478   1           else if(ch==3){
+ 479   2             adc4=ADC_RES;
+ 480   2           adc4<<=2;
+ 481   2           adc4+=ADC_RESL;
+ 482   2             Modbuf_Buffer[8]=adc4/256;
+ 483   2             Modbuf_Buffer[9]=adc4%256;
+ 484   2             ch=4;
+ 485   2           ADC_CONTR = ADC_POWER | ADC_SPEEDLL | ch | ADC_START;
+ 486   2           if(adc4>V_max2){
+ 487   3               V_max2=adc4;  
+ 488   3             }
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 9   
 
- 489   2           if(adc4>V_max2){
- 490   3               V_max2=adc4;  
- 491   3             }
- 492   2           count2++;
- 493   2           }
- 494   1      }
- 495          /**********************************************/
- 496          void Cal_adc(void){
- 497   1         if(A_max1>520){
- 498   2             A_max1=((A_max1-520)*10)/22;
- 499   2             Modbuf_Buffer[10]=A_max1/256;
- 500   2             Modbuf_Buffer[11]=A_max1%256;             
- 501   2           }
- 502   1         
- 503   1           if(A_min1<520){
- 504   2             A_min1=((520-A_min1)*10)/22;
- 505   2             Modbuf_Buffer[12]=A_min1/256;
- 506   2             Modbuf_Buffer[13]=A_min1%256;             
- 507   2           }
- 508   1         
- 509   1         if(A_max2>520){
- 510   2             A_max2=((A_max2-520)*10)/22;
- 511   2             Modbuf_Buffer[14]=A_max2/256;
- 512   2             Modbuf_Buffer[15]=A_max2%256;             
- 513   2           }
- 514   1         
- 515   1           if(A_min2<520){
- 516   2             A_min2=((520-A_min2)*10)/22;
- 517   2             Modbuf_Buffer[16]=A_min2/256;
- 518   2             Modbuf_Buffer[17]=A_min2%256;             
- 519   2           }
- 520   1         if(V_max1<=340){
- 521   2          V_max1=V_max1/3; 
+ 489   2           count2++;
+ 490   2           }
+ 491   1      }
+ 492          /**********************************************/
+ 493          void Cal_adc(void){
+ 494   1         if(A_max1>520){
+ 495   2             A_max1=((A_max1-520)*10)/22;
+ 496   2             Modbuf_Buffer[10]=A_max1/256;
+ 497   2             Modbuf_Buffer[11]=A_max1%256;             
+ 498   2           }
+ 499   1         
+ 500   1           if(A_min1<520){
+ 501   2             A_min1=((520-A_min1)*10)/22;
+ 502   2             Modbuf_Buffer[12]=A_min1/256;
+ 503   2             Modbuf_Buffer[13]=A_min1%256;             
+ 504   2           }
+ 505   1         
+ 506   1         if(A_max2>520){
+ 507   2             A_max2=((A_max2-520)*10)/22;
+ 508   2             Modbuf_Buffer[14]=A_max2/256;
+ 509   2             Modbuf_Buffer[15]=A_max2%256;             
+ 510   2           }
+ 511   1         
+ 512   1           if(A_min2<520){
+ 513   2             A_min2=((520-A_min2)*10)/22;
+ 514   2             Modbuf_Buffer[16]=A_min2/256;
+ 515   2             Modbuf_Buffer[17]=A_min2%256;             
+ 516   2           }
+ 517   1         if(V_max1<=340){
+ 518   2          V_max1=V_max1/3; 
+ 519   2         }
+ 520   1         else{
+ 521   2          V_max1=(V_max1*4)/17;
  522   2         }
- 523   1         else{
- 524   2          V_max1=(V_max1*4)/17;
- 525   2         }
- 526   1           Modbuf_Buffer[18]=V_max1/256;
- 527   1           Modbuf_Buffer[19]=V_max1%256;
- 528   1      
- 529   1         if(V_max2<=340){
- 530   2          V_max2=V_max2/3; 
- 531   2         }
- 532   1         else{
- 533   2          V_max2=(V_max2*4)/17;
- 534   2         } 
- 535   1         Modbuf_Buffer[20]=V_max2/256;
- 536   1           Modbuf_Buffer[21]=V_max2%256;  
- 537   1         
- 538   1         A_min1=520;
- 539   1           A_max1=0;
- 540   1           V_max1=0;  
- 541   1         A_min2=520;
- 542   1           A_max2=0;
- 543   1           V_max2=0;   
- 544   1      }
- 545          /**********************************************/
- 546          void Cal_DHT11(void){
- 547   1      unsigned char i,j;
- 548   1           j=0;
- 549   1           for(i=2;i<10;i++){
- 550   2           j<<=1;
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 10  
+ 523   1           Modbuf_Buffer[18]=V_max1/256;
+ 524   1           Modbuf_Buffer[19]=V_max1%256;
+ 525   1      
+ 526   1         if(V_max2<=340){
+ 527   2          V_max2=V_max2/3; 
+ 528   2         }
+ 529   1         else{
+ 530   2          V_max2=(V_max2*4)/17;
+ 531   2         } 
+ 532   1         Modbuf_Buffer[20]=V_max2/256;
+ 533   1           Modbuf_Buffer[21]=V_max2%256;  
+ 534   1         
+ 535   1         A_min1=520;
+ 536   1           A_max1=0;
+ 537   1           V_max1=0;  
+ 538   1         A_min2=520;
+ 539   1           A_max2=0;
+ 540   1           V_max2=0;   
+ 541   1      }
+ 542          /**********************************************/
+ 543          void Cal_DHT11(void){
+ 544   1      unsigned char i,j;
+ 545   1           j=0;
+ 546   1           for(i=2;i<10;i++){
+ 547   2           j<<=1;
+ 548   2          if(DHT11_buf[i]>3){
+ 549   3            j|=1;
+ 550   3          } 
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 10  
 
- 551   2          if(DHT11_buf[i]>3){
- 552   3            j|=1;
- 553   3          } 
- 554   2         }   
- 555   1         Modbuf_Buffer[22]=j;
- 556   1         j=0;
- 557   1           for(i=10;i<18;i++){
- 558   2           j<<=1;
- 559   2          if(DHT11_buf[i]>3){
- 560   3            j|=1;
- 561   3          } 
- 562   2         }   
- 563   1         Modbuf_Buffer[23]=j;
- 564   1           for(i=18;i<26;i++){
- 565   2           j<<=1;
- 566   2          if(DHT11_buf[i]>3){
- 567   3            j|=1;
- 568   3          } 
- 569   2         }   
- 570   1         Modbuf_Buffer[24]=j;
- 571   1         j=0;
- 572   1           for(i=26;i<34;i++){
- 573   2           j<<=1;
- 574   2          if(DHT11_buf[i]>3){
- 575   3            j|=1;
- 576   3          } 
- 577   2         }   
- 578   1         Modbuf_Buffer[25]=j;  
- 579   1      }
- 580          /**********************************************/
- 581          /*----------------------------
- 582          软件延时
- 583          ----------------------------*/
- 584          void Delay(BYTE n)
- 585          {
- 586   1          WORD x;
- 587   1      
- 588   1          while (n--)
- 589   1          {
- 590   2              x = 0;
- 591   2              while (++x);
- 592   2          }
- 593   1      }
- 594          
- 595          /*----------------------------
- 596          关闭IAP
- 597          ----------------------------*/
- 598          void IapIdle()
- 599          {
- 600   1          IAP_CONTR = 0;                  //关闭IAP功能
- 601   1          IAP_CMD = 0;                    //清除命令寄存器
- 602   1          IAP_TRIG = 0;                   //清除触发寄存器
- 603   1          IAP_ADDRH = 0x80;               //将地址设置到非IAP区域
- 604   1          IAP_ADDRL = 0;
- 605   1      }
- 606          
- 607          /*----------------------------
- 608          从ISP/IAP/EEPROM区域读取一字节
- 609          ----------------------------*/
- 610          BYTE IapReadByte(WORD addr)
- 611          {
- 612   1          BYTE dat;                       //数据缓冲区
-C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 08:59:51 PAGE 11  
+ 551   2         }   
+ 552   1         Modbuf_Buffer[22]=j;
+ 553   1         j=0;
+ 554   1           for(i=10;i<18;i++){
+ 555   2           j<<=1;
+ 556   2          if(DHT11_buf[i]>3){
+ 557   3            j|=1;
+ 558   3          } 
+ 559   2         }   
+ 560   1         Modbuf_Buffer[23]=j;
+ 561   1           for(i=18;i<26;i++){
+ 562   2           j<<=1;
+ 563   2          if(DHT11_buf[i]>3){
+ 564   3            j|=1;
+ 565   3          } 
+ 566   2         }   
+ 567   1         Modbuf_Buffer[24]=j;
+ 568   1         j=0;
+ 569   1           for(i=26;i<34;i++){
+ 570   2           j<<=1;
+ 571   2          if(DHT11_buf[i]>3){
+ 572   3            j|=1;
+ 573   3          } 
+ 574   2         }   
+ 575   1         Modbuf_Buffer[25]=j;  
+ 576   1      }
+ 577          /**********************************************/
+ 578          /*----------------------------
+ 579          ?件延?
+ 580          ----------------------------*/
+ 581          void Delay(BYTE n)
+ 582          {
+ 583   1          WORD x;
+ 584   1      
+ 585   1          while (n--)
+ 586   1          {
+ 587   2              x = 0;
+ 588   2              while (++x);
+ 589   2          }
+ 590   1      }
+ 591          
+ 592          /*----------------------------
+ 593          ??IAP
+ 594          ----------------------------*/
+ 595          void IapIdle()
+ 596          {
+ 597   1          IAP_CONTR = 0;                  //??IAP功能
+ 598   1          IAP_CMD = 0;                    //清除指令寄存器
+ 599   1          IAP_TRIG = 0;                   //清除觸?寄存器
+ 600   1          IAP_ADDRH = 0x80;               //?位址?置到非IAP?網域
+ 601   1          IAP_ADDRL = 0;
+ 602   1      }
+ 603          
+ 604          /*----------------------------
+ 605          ?ISP/IAP/EEPROM?網域?取一字?
+ 606          ----------------------------*/
+ 607          BYTE IapReadByte(WORD addr)
+ 608          {
+ 609   1          BYTE dat;                       //?據???
+ 610   1      
+ 611   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
+ 612   1          IAP_CMD = CMD_READ;             //?置IAP指令
+C51 COMPILER V9.52.0.0   MAIN                                                              08/12/2018 14:29:52 PAGE 11  
 
- 613   1      
- 614   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
- 615   1          IAP_CMD = CMD_READ;             //设置IAP命令
- 616   1          IAP_ADDRL = addr;               //设置IAP低地址
- 617   1          IAP_ADDRH = addr >> 8;          //设置IAP高地址
- 618   1          IAP_TRIG = 0x5a;                //写触发命令(0x5a)
- 619   1          IAP_TRIG = 0xa5;                //写触发命令(0xa5)
- 620   1          _nop_();                        //等待ISP/IAP/EEPROM操作完成
- 621   1          dat = IAP_DATA;                 //读ISP/IAP/EEPROM数据
- 622   1          IapIdle();                      //关闭IAP功能
- 623   1      
- 624   1          return dat;                     //返回
- 625   1      }
- 626          
- 627          /*----------------------------
- 628          写一字节数据到ISP/IAP/EEPROM区域
- 629          ----------------------------*/
- 630          void IapProgramByte(WORD addr, BYTE dat)
- 631          {
- 632   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
- 633   1          IAP_CMD = CMD_PROGRAM;          //设置IAP命令
- 634   1          IAP_ADDRL = addr;               //设置IAP低地址
- 635   1          IAP_ADDRH = addr >> 8;          //设置IAP高地址
- 636   1          IAP_DATA = dat;                 //写ISP/IAP/EEPROM数据
- 637   1          IAP_TRIG = 0x5a;                //写触发命令(0x5a)
- 638   1          IAP_TRIG = 0xa5;                //写触发命令(0xa5)
- 639   1          _nop_();                        //等待ISP/IAP/EEPROM操作完成
- 640   1          IapIdle();
- 641   1      }
- 642          
- 643          /*----------------------------
- 644          扇区擦除
- 645          ----------------------------*/
- 646          void IapEraseSector(WORD addr)
- 647          {
- 648   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
- 649   1          IAP_CMD = CMD_ERASE;            //设置IAP命令
- 650   1          IAP_ADDRL = addr;               //设置IAP低地址
- 651   1          IAP_ADDRH = addr >> 8;          //设置IAP高地址
- 652   1          IAP_TRIG = 0x5a;                //写触发命令(0x5a)
- 653   1          IAP_TRIG = 0xa5;                //写触发命令(0xa5)
- 654   1          _nop_();                        //等待ISP/IAP/EEPROM操作完成
- 655   1          IapIdle();
- 656   1      }
+ 613   1          IAP_ADDRL = addr;               //?置IAP低位址
+ 614   1          IAP_ADDRH = addr >> 8;          //?置IAP高位址
+ 615   1          IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+ 616   1          IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+ 617   1          _nop_();                        //等待ISP/IAP/EEPROM作業完成
+ 618   1          dat = IAP_DATA;                 //?ISP/IAP/EEPROM?據
+ 619   1          IapIdle();                      //??IAP功能
+ 620   1      
+ 621   1          return dat;                     //返回
+ 622   1      }
+ 623          
+ 624          /*----------------------------
+ 625          ?一字??據到ISP/IAP/EEPROM?網域
+ 626          ----------------------------*/
+ 627          void IapProgramByte(WORD addr, BYTE dat)
+ 628          {
+ 629   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
+ 630   1          IAP_CMD = CMD_PROGRAM;          //?置IAP指令
+ 631   1          IAP_ADDRL = addr;               //?置IAP低位址
+ 632   1          IAP_ADDRH = addr >> 8;          //?置IAP高位址
+ 633   1          IAP_DATA = dat;                 //?ISP/IAP/EEPROM?據
+ 634   1          IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+ 635   1          IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+ 636   1          _nop_();                        //等待ISP/IAP/EEPROM作業完成
+ 637   1          IapIdle();
+ 638   1      }
+ 639          
+ 640          /*----------------------------
+ 641          扇?擦除
+ 642          ----------------------------*/
+ 643          void IapEraseSector(WORD addr)
+ 644          {
+ 645   1          IAP_CONTR = ENABLE_IAP;         //使能IAP
+ 646   1          IAP_CMD = CMD_ERASE;            //?置IAP指令
+ 647   1          IAP_ADDRL = addr;               //?置IAP低位址
+ 648   1          IAP_ADDRH = addr >> 8;          //?置IAP高位址
+ 649   1          IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+ 650   1          IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+ 651   1          _nop_();                        //等待ISP/IAP/EEPROM作業完成
+ 652   1          IapIdle();
+ 653   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -4,10 +4,10 @@
 typedef unsigned char BYTE;
 typedef unsigned int WORD;
 
-#define CMD_IDLE    0               //盯家Α
-#define CMD_READ    1               //IAPじ舱弄
-#define CMD_PROGRAM 2               //IAPじ舱祘Αて
-#define CMD_ERASE   3               //IAP跋揽埃
+#define CMD_IDLE    0               // 侍機
+#define CMD_READ    1               //IAP讀取資料
+#define CMD_PROGRAM 2               //IAP寫入資料
+#define CMD_ERASE   3               //IAP清除資料
 
 //#define ENABLE_IAP 0x80           //if SYSCLK<30MHz
 //#define ENABLE_IAP 0x81           //if SYSCLK<24MHz
@@ -42,10 +42,7 @@ void main(void)
 	SBUF=ID; 
     ch=2;
 	
-    Delay(10);                   //┑
-    //IapEraseSector(0x4000);    //跋揽埃
-	//IapReadByte(0x4000); 
-    //IapProgramByte(0x4000, 0xa5);	
+    Delay(10);   //蛓入ID
 	id_data=IapReadByte(0x4000); 
 	ID=id_data;
 	
@@ -112,13 +109,13 @@ unsigned char buf;
 					id_data = RX2_Buffer[6]&0x0f;
 					id_data += (RX2_Buffer[5]&0x0f)*10;
 					id_data += (RX2_Buffer[4]&0x0f)*100;	
-			        IapEraseSector(0x4000);    //跋揽埃
+			        IapEraseSector(0x4000);    //清除資料
                     IapProgramByte(0x4000, id_data);	
 					id_data=IapReadByte(0x4000); 
 					ID=id_data;
 				 }
 			     else if(RX2_Buffer[3]==0x31){
-					if(P34==0){          //膥筿竟1
+					if(P34==0){          //繼電器1
 						Modbuf_Buffer[1]&=0xfe;
 					}
 					else{
@@ -126,7 +123,7 @@ unsigned char buf;
 					}
 				 }	
 				 else if(RX2_Buffer[3]==0x32){
-					if(P35==0){          //膥筿竟2 
+					if(P35==0){          //繼電器2 
 						Modbuf_Buffer[1]&=0xfd;
 					}
 					else{
@@ -140,25 +137,25 @@ unsigned char buf;
            P27=1;
            tx2_end=17;
            tx2_cnt=1;
-	       buf=TX2_Buffer[0]=0x00; //繷絏*3	
+	       buf=TX2_Buffer[0]=0x00; //頭碼*3	
 		   TX2_Buffer[1]=0x00;
 		   TX2_Buffer[2]=0x00;
-		   TX2_Buffer[3]=0x10;  //
-		   //TX2_Buffer[4]=ID;    //腹 
-		   TX2_Buffer[4]=id_data;    //腹 		   
-		   TX2_Buffer[5]=~P34;  //膥筿竟1
+		   TX2_Buffer[3]=0x10;  //長度
+		   //TX2_Buffer[4]=ID;    //站號
+		   TX2_Buffer[4]=id_data;    //站號		   
+		   TX2_Buffer[5]=~P34;  //繼電器1
 		   TX2_Buffer[5]+=0x30;
-		   TX2_Buffer[6]=~P35;  //膥筿竟2
+		   TX2_Buffer[6]=~P35;  //繼電器2
 		   TX2_Buffer[6]+=0x30;		   
-		   TX2_Buffer[7]=Modbuf_Buffer[10];   //CH1筿瑈
+		   TX2_Buffer[7]=Modbuf_Buffer[10];   //CH1電流
 		   TX2_Buffer[8]=Modbuf_Buffer[11];		
-		   TX2_Buffer[9]=Modbuf_Buffer[14];   //CH2筿瑈
+		   TX2_Buffer[9]=Modbuf_Buffer[14];   //CH2電流
 		   TX2_Buffer[10]=Modbuf_Buffer[15];
-		   TX2_Buffer[11]=Modbuf_Buffer[18];  //CH1筿溃
+		   TX2_Buffer[11]=Modbuf_Buffer[18];  //CH1電壓
 		   TX2_Buffer[12]=Modbuf_Buffer[19];
-		   TX2_Buffer[13]=Modbuf_Buffer[20];  //CH2筿溃
+		   TX2_Buffer[13]=Modbuf_Buffer[20];  //CH2電壓
 		   TX2_Buffer[14]=Modbuf_Buffer[21];	
-		   TX2_Buffer[15]=0x0d;	//Ю絏
+		   TX2_Buffer[15]=0x0d;	//尾碼
 		   TX2_Buffer[16]=0x0a;	
            S2BUF=buf;
 	 }
@@ -579,7 +576,7 @@ unsigned char i,j;
 }
 /**********************************************/
 /*----------------------------
-软件延时
+?件延?
 ----------------------------*/
 void Delay(BYTE n)
 {
@@ -593,64 +590,64 @@ void Delay(BYTE n)
 }
 
 /*----------------------------
-关闭IAP
+??IAP
 ----------------------------*/
 void IapIdle()
 {
-    IAP_CONTR = 0;                  //关闭IAP功能
-    IAP_CMD = 0;                    //清除命令寄存器
-    IAP_TRIG = 0;                   //清除触发寄存器
-    IAP_ADDRH = 0x80;               //将地址设置到非IAP区域
+    IAP_CONTR = 0;                  //??IAP功能
+    IAP_CMD = 0;                    //清除指令寄存器
+    IAP_TRIG = 0;                   //清除觸?寄存器
+    IAP_ADDRH = 0x80;               //?位址?置到非IAP?網域
     IAP_ADDRL = 0;
 }
 
 /*----------------------------
-从ISP/IAP/EEPROM区域读取一字节
+?ISP/IAP/EEPROM?網域?取一字?
 ----------------------------*/
 BYTE IapReadByte(WORD addr)
 {
-    BYTE dat;                       //数据缓冲区
+    BYTE dat;                       //?據???
 
     IAP_CONTR = ENABLE_IAP;         //使能IAP
-    IAP_CMD = CMD_READ;             //设置IAP命令
-    IAP_ADDRL = addr;               //设置IAP低地址
-    IAP_ADDRH = addr >> 8;          //设置IAP高地址
-    IAP_TRIG = 0x5a;                //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                //写触发命令(0xa5)
-    _nop_();                        //等待ISP/IAP/EEPROM操作完成
-    dat = IAP_DATA;                 //读ISP/IAP/EEPROM数据
-    IapIdle();                      //关闭IAP功能
+    IAP_CMD = CMD_READ;             //?置IAP指令
+    IAP_ADDRL = addr;               //?置IAP低位址
+    IAP_ADDRH = addr >> 8;          //?置IAP高位址
+    IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+    IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+    _nop_();                        //等待ISP/IAP/EEPROM作業完成
+    dat = IAP_DATA;                 //?ISP/IAP/EEPROM?據
+    IapIdle();                      //??IAP功能
 
     return dat;                     //返回
 }
 
 /*----------------------------
-写一字节数据到ISP/IAP/EEPROM区域
+?一字??據到ISP/IAP/EEPROM?網域
 ----------------------------*/
 void IapProgramByte(WORD addr, BYTE dat)
 {
     IAP_CONTR = ENABLE_IAP;         //使能IAP
-    IAP_CMD = CMD_PROGRAM;          //设置IAP命令
-    IAP_ADDRL = addr;               //设置IAP低地址
-    IAP_ADDRH = addr >> 8;          //设置IAP高地址
-    IAP_DATA = dat;                 //写ISP/IAP/EEPROM数据
-    IAP_TRIG = 0x5a;                //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                //写触发命令(0xa5)
-    _nop_();                        //等待ISP/IAP/EEPROM操作完成
+    IAP_CMD = CMD_PROGRAM;          //?置IAP指令
+    IAP_ADDRL = addr;               //?置IAP低位址
+    IAP_ADDRH = addr >> 8;          //?置IAP高位址
+    IAP_DATA = dat;                 //?ISP/IAP/EEPROM?據
+    IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+    IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+    _nop_();                        //等待ISP/IAP/EEPROM作業完成
     IapIdle();
 }
 
 /*----------------------------
-扇区擦除
+扇?擦除
 ----------------------------*/
 void IapEraseSector(WORD addr)
 {
     IAP_CONTR = ENABLE_IAP;         //使能IAP
-    IAP_CMD = CMD_ERASE;            //设置IAP命令
-    IAP_ADDRL = addr;               //设置IAP低地址
-    IAP_ADDRH = addr >> 8;          //设置IAP高地址
-    IAP_TRIG = 0x5a;                //写触发命令(0x5a)
-    IAP_TRIG = 0xa5;                //写触发命令(0xa5)
-    _nop_();                        //等待ISP/IAP/EEPROM操作完成
+    IAP_CMD = CMD_ERASE;            //?置IAP指令
+    IAP_ADDRL = addr;               //?置IAP低位址
+    IAP_ADDRH = addr >> 8;          //?置IAP高位址
+    IAP_TRIG = 0x5a;                //?觸?指令(0x5a)
+    IAP_TRIG = 0xa5;                //?觸?指令(0xa5)
+    _nop_();                        //等待ISP/IAP/EEPROM作業完成
     IapIdle();
 }
