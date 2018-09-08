@@ -134,7 +134,7 @@ unsigned char buf;
 		     }			   
 		   }		 
 		 
-           P27=1;
+         /*  P27=1;
            tx2_end=17;
            tx2_cnt=1;
 	       buf=TX2_Buffer[0]=0x00; //î^´a*3	
@@ -158,6 +158,7 @@ unsigned char buf;
 		   TX2_Buffer[15]=0x0d;	//Î²´a
 		   TX2_Buffer[16]=0x0a;	
            S2BUF=buf;
+		   */
 	 }
 }
 //-----------------------------------------------------------//
