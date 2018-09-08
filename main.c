@@ -28,6 +28,11 @@ void IapProgramByte(WORD addr, BYTE dat);
 void IapEraseSector(WORD addr);
 unsigned char id_data;	
 
+unsigned char xdata  disp1_buf[16];
+unsigned char xdata  disp2_buf[16];
+unsigned char disp_count;
+
+void load_disp(void);
 void app_command(void);
 //-----------------------------------------------------------//
 void main(void)
@@ -54,6 +59,7 @@ void main(void)
 			temp3++;
             if(temp2>100){
               temp2=0;
+
             }
         }
 		if(temp3<10){
@@ -70,7 +76,8 @@ void main(void)
 			}			
 		}
 		else{			
-			temp3=0;		
+			temp3=0;
+			load_disp();		
 		}
         if(rx1_to>=400){
           rx1_to=0;
@@ -96,9 +103,35 @@ void main(void)
     }
 }
 //-----------------------------------------------------------//
-
+void load_disp(void){
+	 disp_count++;
+	 
+     P27=1;
+     tx2_end=17;
+     tx2_cnt=1;
+	 TX2_Buffer[0]=0x00; //î^´a*3	
+	 TX2_Buffer[1]=0x00;
+	 TX2_Buffer[2]=0x00;	
+	 TX2_Buffer[3]=0x10;  //éL¶È
+	 TX2_Buffer[6]=0x20;	 
+     if(disp_count==1){
+		TX2_Buffer[4]=0x33; 
+ 		TX2_Buffer[5]=P34;
+		TX2_Buffer[5]+=0x30;
+	
+	 } 
+	 else{
+		disp_count=0;
+		TX2_Buffer[4]=0x34; 
+  		TX2_Buffer[5]=P35;
+		TX2_Buffer[5]+=0x30;
+		
+	 }
+     S2BUF=0x00;	
+}
+//-----------------------------------------------------------//
 void app_command(void){
-unsigned char buf;	
+//unsigned char buf;	
 	 if(rx2_cnt>0){
 		   if(RX2_Buffer[0]==0){
 			 RX2_Buffer[0]=0x01;  
