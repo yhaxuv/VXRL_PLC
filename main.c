@@ -104,6 +104,7 @@ void main(void)
 }
 //-----------------------------------------------------------//
 void load_disp(void){
+	unsigned int v1,a1;
 	 disp_count++;
 	 
      P27=1;
@@ -112,20 +113,40 @@ void load_disp(void){
 	 TX2_Buffer[0]=0x00; //頭碼*3	
 	 TX2_Buffer[1]=0x00;
 	 TX2_Buffer[2]=0x00;	
-	 TX2_Buffer[3]=0x10;  //長度
-	 TX2_Buffer[6]=0x20;	 
+	 TX2_Buffer[3]=13;  //長度
+	 TX2_Buffer[6]=0x20;	
+	 TX2_Buffer[9]=0x2e;
+	 TX2_Buffer[11]=0x41;	
+	 TX2_Buffer[12]=0x20;	
+	 TX2_Buffer[16]=0x56;	
+  
      if(disp_count==1){
 		TX2_Buffer[4]=0x33; 
  		TX2_Buffer[5]=P34;
 		TX2_Buffer[5]+=0x30;
-	
+		v1=Modbuf_Buffer[10];   //CH1電流
+	    TX2_Buffer[7]=(v1/100)+0x30;
+	    TX2_Buffer[8]=((v1%100)/10)+0x30;		
+	    TX2_Buffer[10]=((v1%100)%10)+0x30;	
+		a1=Modbuf_Buffer[18];  //CH1電壓	
+	    TX2_Buffer[13]=(a1/100)+0x30;
+	    TX2_Buffer[14]=((a1%100)/10)+0x30;		
+	    TX2_Buffer[15]=((a1%100)%10)+0x30;		
+		
 	 } 
 	 else{
 		disp_count=0;
 		TX2_Buffer[4]=0x34; 
   		TX2_Buffer[5]=P35;
 		TX2_Buffer[5]+=0x30;
-		
+		v1=Modbuf_Buffer[14];   //CH2電流
+	    TX2_Buffer[7]=(v1/100)+0x30;
+	    TX2_Buffer[8]=((v1%100)/10)+0x30;		
+	    TX2_Buffer[10]=((v1%100)%10)+0x30;	
+		a1=Modbuf_Buffer[20];  //CH2電壓	
+	    TX2_Buffer[13]=(a1/100)+0x30;
+	    TX2_Buffer[14]=((a1%100)/10)+0x30;		
+	    TX2_Buffer[15]=((a1%100)%10)+0x30;		
 	 }
      S2BUF=0x00;	
 }
