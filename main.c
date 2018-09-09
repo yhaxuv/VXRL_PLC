@@ -159,16 +159,16 @@ void app_command(void){
 		     if(RX2_Buffer[1]==0){
 		       if(RX2_Buffer[2]==0){
 
-			     if(RX2_Buffer[3]==0x30){
-					id_data = RX2_Buffer[6]&0x0f;
-					id_data += (RX2_Buffer[5]&0x0f)*10;
-					id_data += (RX2_Buffer[4]&0x0f)*100;	
+			     if(RX2_Buffer[4]==0x30){
+					id_data = RX2_Buffer[7]&0x0f;
+					id_data += (RX2_Buffer[6]&0x0f)*10;
+					id_data += (RX2_Buffer[5]&0x0f)*100;	
 			        IapEraseSector(0x4000);    //Çå³ýÙYÁÏ
                     IapProgramByte(0x4000, id_data);	
 					id_data=IapReadByte(0x4000); 
 					ID=id_data;
 				 }
-			     else if(RX2_Buffer[3]==0x31){
+			     else if(RX2_Buffer[4]==0x31){
 					if(P34==0){          //À^ëŠÆ÷1
 						Modbuf_Buffer[1]&=0xfe;
 					}
@@ -176,7 +176,7 @@ void app_command(void){
 						Modbuf_Buffer[1]|=0x01;
 					}
 				 }	
-				 else if(RX2_Buffer[3]==0x32){
+				 else if(RX2_Buffer[4]==0x32){
 					if(P35==0){          //À^ëŠÆ÷2 
 						Modbuf_Buffer[1]&=0xfd;
 					}

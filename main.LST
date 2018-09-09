@@ -1,4 +1,4 @@
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 1   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 1   
 
 
 C51 COMPILER V9.52.0.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52   1        ID=id_data;
   53   1        
   54   1          while (1)
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 2   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 2   
 
   55   1          {
   56   2              if(temp1>200){
@@ -126,7 +126,7 @@ line level    source
  114   1         TX2_Buffer[1]=0x00;
  115   1         TX2_Buffer[2]=0x00;  
  116   1         TX2_Buffer[3]=13;  //長度
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 3   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 3   
 
  117   1         TX2_Buffer[6]=0x20;  
  118   1         TX2_Buffer[9]=0x2e;
@@ -173,16 +173,16 @@ line level    source
  159   3               if(RX2_Buffer[1]==0){
  160   4                 if(RX2_Buffer[2]==0){
  161   5      
- 162   5                 if(RX2_Buffer[3]==0x30){
- 163   6                id_data = RX2_Buffer[6]&0x0f;
- 164   6                id_data += (RX2_Buffer[5]&0x0f)*10;
- 165   6                id_data += (RX2_Buffer[4]&0x0f)*100;  
+ 162   5                 if(RX2_Buffer[4]==0x30){
+ 163   6                id_data = RX2_Buffer[7]&0x0f;
+ 164   6                id_data += (RX2_Buffer[6]&0x0f)*10;
+ 165   6                id_data += (RX2_Buffer[5]&0x0f)*100;  
  166   6                    IapEraseSector(0x4000);    //清除資料
  167   6                          IapProgramByte(0x4000, id_data);  
  168   6                id_data=IapReadByte(0x4000); 
  169   6                ID=id_data;
  170   6               }
- 171   5                 else if(RX2_Buffer[3]==0x31){
+ 171   5                 else if(RX2_Buffer[4]==0x31){
  172   6                if(P34==0){          //繼電器1
  173   7                  Modbuf_Buffer[1]&=0xfe;
  174   7                }
@@ -190,9 +190,9 @@ line level    source
  176   7                  Modbuf_Buffer[1]|=0x01;
  177   7                }
  178   6               }  
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 4   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 4   
 
- 179   5               else if(RX2_Buffer[3]==0x32){
+ 179   5               else if(RX2_Buffer[4]==0x32){
  180   6                if(P35==0){          //繼電器2 
  181   7                  Modbuf_Buffer[1]&=0xfd;
  182   7                }
@@ -254,7 +254,7 @@ line level    source
  238   1           P55 = 0;
  239   1      }
  240          //-----------------------------------------------------------//
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 5   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 5   
 
  241          void GPIO_config(void){
  242   1           P1M1 = 0x3c;
@@ -318,7 +318,7 @@ line level    source
  300   2              rx1_to=0;
  301   2              if(rx1_cnt<128){
  302   3                RX1_Buffer[rx1_cnt]=SBUF;
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 6   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 6   
 
  303   3                rx1_cnt++;
  304   3              }
@@ -382,7 +382,7 @@ line level    source
  362   2              Modbuf_Buffer[0]&=0xfd; 
  363   2           }
  364   1           if(P20==0){
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 7   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 7   
 
  365   2              Modbuf_Buffer[0]|=0x04; 
  366   2           }
@@ -446,7 +446,7 @@ line level    source
  424   2             if(crc==crc_buf){
  425   3               addr=RX1_Buffer[2];
  426   3               addr<<=8;
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 8   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 8   
 
  427   3               addr+=RX1_Buffer[3]; 
  428   3               addr<<=1;
@@ -510,7 +510,7 @@ line level    source
  486   2           }   
  487   1      }
  488          /**********************************************/
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 9   
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 9   
 
  489          void GET_ADC(void){
  490   1           if(ch==4){
@@ -574,7 +574,7 @@ line level    source
  548          void Cal_adc(void){
  549   1         if(A_max1>520){
  550   2             A_max1=((A_max1-520)*10)/22;
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 10  
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 10  
 
  551   2             Modbuf_Buffer[10]=A_max1/256;
  552   2             Modbuf_Buffer[11]=A_max1%256;             
@@ -638,7 +638,7 @@ line level    source
  610   2           j<<=1;
  611   2          if(DHT11_buf[i]>3){
  612   3            j|=1;
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 11  
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 11  
 
  613   3          } 
  614   2         }   
@@ -702,7 +702,7 @@ line level    source
  672   1          _nop_();                        //等待ISP/IAP/EEPROM作業完成
  673   1          dat = IAP_DATA;                 //?ISP/IAP/EEPROM?據
  674   1          IapIdle();                      //??IAP功能
-C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 11:54:03 PAGE 12  
+C51 COMPILER V9.52.0.0   MAIN                                                              09/09/2018 22:03:40 PAGE 12  
 
  675   1      
  676   1          return dat;                     //返回
@@ -741,7 +741,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   3571    ----
+   CODE SIZE        =   3573    ----
    CONSTANT SIZE    =    512    ----
    XDATA SIZE       =   2690      10
    PDATA SIZE       =   ----    ----
